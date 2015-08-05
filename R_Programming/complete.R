@@ -13,8 +13,8 @@ complete <- function(directory, id = 1:332) {
         ## where 'id' is the monitor ID number and 'nobs' is the
         ## number of complete cases
                     
-		 # get file names with directory                                                                               
-    	 file_names <- paste(directory,"/",formatC(id, width=3, flag="0"),'.csv', sep="")
+		 # get file names with directory
+         file_names <- paste(directory,"/",formatC(id, width=3, flag="0"),'.csv', sep="")
 
 		 # read file contents to a list
 		 pollutant_list <- lapply(file_names, read.csv, header=TRUE)

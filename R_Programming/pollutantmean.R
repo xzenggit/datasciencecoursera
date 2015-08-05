@@ -14,7 +14,7 @@ pollutantmean <- function(directory, pollutant, id = 1:332) {
     
     ## NOTE: Do not round the result!
     
-    # get file names with directory                                                                               
+    # get file names with directory
     file_names <- paste(directory,"/",formatC(id, width=3, flag="0"),'.csv', sep="")
 		
 	# read file contents to a list

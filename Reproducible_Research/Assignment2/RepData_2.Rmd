@@ -1,0 +1,61 @@
+---
+title: "What kind of storm is the most harmful respect to popluation health and economic health?"
+output: 
+    html_document:
+      toc: true    
+---
+Synopsis: Based on the NOAA Storm Data, the analysis concludes that TORNADO is the most harmful event respect to population health and economic consequences among all the storm types.
+
+## Introduction
+Storms and other severe weather events can cause both public health and economic problems for communities and municipalities. Many severe events can result in fatalities, injuries, and property damage, and preventing such outcomes to the extent possible is a key concern.
+
+This project involves exploring the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database. This database tracks characteristics of major storms and weather events in the United States, including when and where they occur, as well as estimates of any fatalities, injuries, and property damage.
+
+## Data Processing
+
+The data comes from the National Weather Service [Storm Data Center](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf) with comma-seperation.
+
+First, we need to load the data, and show the first five lines of the data:
+```{r, echo=TRUE, warning=FALSE, message=FALSE}
+library(dplyr)
+storm <- read.csv("repdata-data-StormData.csv", header=TRUE, sep=",")
+head(storm,3)
+```
+
+For our questions, we only focus on several variables:
+```{r, echo=TRUE}
+storm <- select(storm, EVTYPE, FATALITIES, INJURIES, PROPDMG, CROPDMG)
+head(storm,3)
+```
+
+## Results
+
+### Across the United States, which types of events are most harmful with respect to population health?
+
+```{r, echo=TRUE}
+population <- mutate(storm, p_health=FATALITIES+INJURIES)
+by_type <- aggregate(p_health~EVTYPE, data=population, sum)
+by_type <- arrange(by_type, desc(p_health))
+barplot( height=by_type$p_health[1:20],names.arg=by_type$EVTYPE[1:20], xlab="Event type",
+     ylab="Number of fatalities and injuries", 
+     main="Type of events with respect to population health")
+```
+
+As we can see from the results, `r by_type$EVTYPE[1]` is most harmful with respect to population health.
+
+
+### Across the United States, which types of events have the greatest economic consequences?
+```{r, echo=TRUE}
+economic <- mutate(storm, eco_con=PROPDMG+CROPDMG)
+eco_type <- aggregate(eco_con~EVTYPE, data=economic, sum)
+eco_type <- arrange(eco_type, desc(eco_con))
+barplot( height=eco_type$eco_con[1:20],names.arg=eco_type$EVTYPE[1:20], xlab="Event type",
+     ylab="Total value of damage", 
+     main="Type of events with respect to economic damage")
+```
+
+As we can see from the results, `r eco_type$EVTYPE[1]` has the greatest economic consequencces.
+
+## Summary
+
+For the above analysis, we can see `r eco_type$EVTYPE[1]` is the most damagable event respect to population health and economic consequences.

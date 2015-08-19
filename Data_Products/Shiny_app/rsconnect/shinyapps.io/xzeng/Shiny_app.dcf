@@ -1,0 +1,8 @@
+name: Shiny_app
+account: xzeng
+server: shinyapps.io
+bundleId: 242634
+url: https://xzeng.shinyapps.io/Shiny_app
+when: 1439861020.03032
+asMultiple: FALSE
+asStatic: FALSE

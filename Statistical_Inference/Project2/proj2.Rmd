@@ -1,0 +1,80 @@
+---
+title: "ToothGrowth Data Analysis"
+author: "X. Zeng"
+date: "August 18, 2015"
+output: word_document
+---
+
+## Introduction
+
+In this report, we are going to analyze the ToothGrowth data in the R datasets package. The response is the length of odontoblasts (teeth) in each of 10 guinea pigs at each of three dose levels of Vitamin C (0.5, 1, and 2 mg) with each of two delivery methods (orange juice or ascorbic acid).
+
+## Exploratory data analysis
+
+First, we need to load the data and take a look at the first three lines of the data.
+
+```{r, echo=TRUE}
+library(ggplot2)
+library(datasets)
+head(ToothGrowth, 3)
+```
+
+Then, we can plot the tooth len with the supplies as independent variable, filled with the dose variable. 
+
+```{r, echo=TRUE}
+qplot(x=supp, y=len, color=dose, data=ToothGrowth)
+```
+
+It seems there are some differences for the tooth length among difference conditions, such as VC vs OJ, and different dose levels (0.5, 1.5, 2.0). However, it's hard to tell if the diffrences are real. So we need to do hypothesis tests to see if there are differences for the tooth lenght at different conditions. For now, we need summarise the data first.
+
+```{r, echo=TRUE}
+summary(ToothGrowth)
+```
+
+## Hypothesis tests
+
+First, let's look at the effect of Vitamin C to see if there are diffrences between the means of tooth length treated by Vitamin C (VC) and Orange Juice (OJ). So we need to do a T-test.
+
+```{r, echo=TRUE}
+t.test(ToothGrowth$len~ToothGrowth$supp,
+       paired=FALSE, var.equal=FALSE, conf.level=0.95)
+```
+
+From the results, we can see the p-value is larger than 0.05, which means we cannot reject the hypothesis that the means of tooth length treated by VC and OJ are equal at 95% confidence level.
+
+Now, let's check the effect of different dose levels (0.5, 1.0, 2.0). Because there are 3 groups now, we need the one-way ANOVA.
+
+```{r, echo=TRUE}
+oneway.test(ToothGrowth$len~ToothGrowth$dose, var.equal = FALSE)
+```
+
+From the results, we can see the p-value is very small, so we can reject the null hypotheise, and conclude that there are differences for the tooth length among different dose levels.
+
+## Conclusion
+
+For the above analysis, we cannot say there are differences between the tooth length treated by VC and OJ. However, the dose levels do affect the tooth length.
+
+The above hypothesis analyses are based on the asummption that the variaces of tooth length are different for different groups, and the samples are independent with each other.
+
+Appendix: R code
+```{r, echo=TRUE, eval=FALSE}
+# This is for Statistical Inference Projcet2
+
+# load libraries and data
+library(ggplot2)
+library(datasets)
+head(ToothGrowth, 3)
+
+# Exploratory data analysis
+qplot(x=supp, y=len, color=dose, data=ToothGrowth)
+
+# provide summary
+summary(ToothGrowth)
+
+# statistical inference: effect of VS and OJ
+t.test(ToothGrowth$len~ToothGrowth$supp,
+       paired=FALSE, var.equal=FALSE, conf.level=0.95)
+
+# statistical inference: effect of dose
+oneway.test(ToothGrowth$len~ToothGrowth$dose, var.equal = FALSE)
+```

@@ -1,0 +1,34 @@
+R_slides for Data Product Course
+========================================================
+author: X. Zeng
+date: 2015-08-16
+
+Introduction
+========================================================
+
+Data Product Course is very useful for bring your work to the public.
+
+- First, you need to learn R.
+- Second, you need to learn shiny.
+- Third, you need to learn slidy.
+
+Here is a mtcars example.
+========================================================
+
+We show the first 5 lines of mtcars dataset:
+```{r}
+head(mtcars,5)
+```
+
+Plot mpg vs weight in mtcars
+========================================================
+
+```{r, echo=FALSE}
+plot(mtcars$wt, mtcars$mpg, xlab="weight", ylab="mpg")
+```
+
+Hope you enjoy the presentaion so far!
+========================================================
+
+Thank you for your time!
+

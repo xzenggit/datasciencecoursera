@@ -1,0 +1,110 @@
+---
+title: "Exercise manner prediction"
+author: "X. Zeng"
+date: "August 19, 2015"
+output: html_document
+---
+
+## Introduction
+
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har 
+
+The goal of our project is to predict the manner in which they did the exercise. 
+
+## Data prepare
+
+First, we need to clean and prepare the dataset for our model.
+
+```{r, echo=TRUE}
+library(caret)
+library(glmnet)
+library(corrplot)
+library(randomForest)
+data_train <- read.csv("~/Desktop/work/job/data/coursera/data/pml-training.csv", 
+                       na.strings = c("NA", ""))
+data_test <- read.csv("~/Desktop/work/job/data/coursera/data/pml-testing.csv",
+                      na.strings = c("NA", ""))
+```
+
+We can take a look at the data using:
+
+```{r, echo=TRUE}
+dim(data_train)
+str(data_train)
+```
+
+This is a very large dataset with a lot of variables and NAs. If there are a lot of NAs in one column, we can consider it as incomplete and do not use it in our model. 
+
+Here, we select the variables with NA percentage less than 40%.
+
+```{r, echo=TRUE}
+data_train <- data_train[, colSums(!is.na(data_train)) > nrow(data_train)*0.6]
+dim(data_train)
+```
+
+Another thing we notice is that the first seven variables are not related to our objective variable. So we can get rid of them.
+
+```{r, echo=TRUE}
+data_train <- data_train[,8:ncol(data_train)]
+dim(data_train)
+```
+
+Now, we have less variables, but still a lot. Let's see if these variables (except the objective variabe) are correlated by plotting the correlation map.
+
+```{r, echo=TRUE}
+corr_mat <- cor(data_train[,-ncol(data_train)])
+corrplot(corr_mat, type="upper", method="circle")
+```
+
+It seems that all the variables are in a reasonable correlation range. We can build our model now.
+
+## Model
+
+Because this is a classification problem, we can use decision tree method. First, we need to partion the data into training (70%) and testing (30%) sets.
+
+```{r, echo=TRUE}
+ind_training <- createDataPartition(y=data_train$classe, p=0.7, list=FALSE)
+training <- data_train[ind_training,]
+testing <- data_train[-ind_training,]
+```
+
+And then build the model.
+
+```{r, echo=TRUE}
+fit <- train(classe~., method="rf", data=training)
+```
+
+Now, let's see the performance of the model on testing data.
+
+```{r, echo=TRUE}
+pred <- predict(fit, newdata=testing)
+confusionMatrix(pred, testing$classe)
+```
+
+As we can see, the model performace is quite impressive.
+
+## For test data
+
+Now, let's see the model performance on the pml-testing.csv dataset, and generate the txt files for assignment submission.
+
+```{r, echo=TRUE}
+answers <- predict(fit, newdata=data_test)
+```
+```{r, echo=TRUE, eval=FALSE}
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
+
+pml_write_files(answers)
+```
+
+
+
+
+
+
+

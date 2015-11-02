@@ -2,7 +2,7 @@
 title: "MPG difference between automatic and manual transmission"
 author: "X. Zeng"
 date: "August 19, 2015"
-output: pdf_document
+output: word_document
 ---
 
 ## Introduction
@@ -12,7 +12,7 @@ Looking at a data set of a collection of cars, people in Motor Trend, a magazine
 
 "Quantify the MPG difference between automatic and manual transmissions"
 
-In this report, I'll use regression models to answer the questions.
+In this report, I'll use regression models to answer the questions, and we will find that manual has higher mpg than automatic transmission.
 
 ## Exploratory data analysis
 
@@ -21,7 +21,7 @@ First, let's load the data:
 ```{r, echo=TRUE}
 library(ggplot2)
 data(mtcars)
-head(mtcars)
+head(mtcars,3)
 ```
 
 Then, let's use a boxplot to see the mpg difference between automatic (`am=0`) and manual (`am=1`) transmission. For the figure (in Appendix), we can see there are some difference between to two mpgs. 
@@ -30,7 +30,7 @@ Then, let's use a boxplot to see the mpg difference between automatic (`am=0`) a
 
 Now, let's use two linear regression models to see if there's some difference between different transimission systems. 
 
-```{r, echo=FALSE}
+```{r, echo=TRUE, message=FALSE}
 df1 <- mtcars[mtcars$am==1,]
 df2 <- mtcars[mtcars$am==0,]
 dim(df1)
@@ -62,10 +62,10 @@ ggplot(mtcars, aes(as.factor(am),mpg))+geom_boxplot()
 ```
 
 ```{r, echo=FALSE}
-plot(fit1$mpg, fit1$residuals, xlab="mpg",ylab="residuals", main="residuals for automatic")
+plot(df1$mpg, fit1$residuals, xlab="mpg",ylab="residuals", main="residuals for automatic")
 ```
 
 ```{r, echo=FALSE}
-plot(fit2$mpg, fit2$residuals, xlab="mpg",ylab="residuals", main="residuals for manual")
+plot(df2$mpg, fit2$residuals, xlab="mpg",ylab="residuals", main="residuals for manual")
 ```
 
